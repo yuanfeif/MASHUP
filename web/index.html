@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>行政地图&天气</title>
+    <style type="text/css">
+        html{height:100%}
+        body{
+            height:100%;
+            margin:0px;
+            padding:0px;
+            font-family: Helvetica, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', Arial, sans-serif;
+            text-align: center;
+            background-color: black;
+        }
+        h1{
+            font: 700 20px "Comic Sans MS";
+            color: white;
+            text-shadow: 0 0 20px #fdec84,
+            10px -10px 30px #ffae35,
+            20px -20px 40px #ec760c,
+            -20px -60px 50px #cd4607,
+            0px -80px 60px #973717,
+            10px -40px 70px #451b0e;
+        }
+        #container{height:100%}
+        #weather{
+            visibility: hidden;
+            margin: 20px auto;
+            width: 300px;
+            top: 150px;
+            left: 800px;
+            height: 150px;
+            padding: 10px;
+            position:absolute;
+            background: -webkit-gradient(linear, 0% 20%, 0% 92%, from(#f3f3f3), to(#fff), color-stop(.1,#f3f3f3));
+            border-top: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            -webkit-border-bottom-right-radius: 60px 60px;
+            -webkit-box-shadow: -1px 2px 2px rgba(0, 0, 0, 0.2);
+
+        }
+        #weather:before{
+            content:'';
+            width: 25px;
+            height: 20px;
+            position: absolute;
+            bottom:0;
+            right:0;
+            -webkit-border-bottom-right-radius: 30px;
+            -webkit-box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.3);
+            -webkit-transform:
+                    rotate(-20deg)
+                    skew(-40deg,-3deg)
+                    translate(-13px,-13px);
+        }
+
+        #weather:after{
+            content: '';
+            z-index: -1;
+            width: 100px;
+            height: 100px;
+            position:absolute;
+            bottom:0;
+            right:0;
+            background: rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            -webkit-box-shadow: 20px 20px 8px rgba(0, 0, 0, 0.2);
+            -webkit-transform: rotate(0deg)
+            translate(-45px,-20px)
+            skew(20deg);
+        }
+        /*#weather{*/
+        /*    visibility: hidden;*/
+        /*    width: 320px;*/
+        /*    height: 150px;*/
+        /*    margin-left: 30px;*/
+        /*    position: absolute;*/
+        /*    background-color: white;*/
+        /*    border: 1px solid black;*/
+        /*    top: 150px;*/
+        /*    left: 800px;*/
+        /*    border-radius: 5px;*/
+        /*}*/
+        /*#district{*/
+        /*    visibility: hidden;*/
+        /*    width: 320px;*/
+        /*    height: 100px;*/
+        /*    margin-left: 30px;*/
+        /*    position: absolute;*/
+        /*    background-color: white;*/
+        /*    border: 1px solid black;*/
+        /*    top: 300px;*/
+        /*    left: 800px;*/
+        /*    border-radius: 5px;*/
+        /*}*/
+        #district{
+            visibility: hidden;
+            margin: 20px auto;
+            width: 300px;
+            top: 320px;
+            left: 800px;
+            height: 100px;
+            padding: 10px;
+            position:absolute;
+            background: -webkit-gradient(linear, 0% 20%, 0% 92%, from(#f3f3f3), to(#fff), color-stop(.1,#f3f3f3));
+            border-top: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            -webkit-border-bottom-right-radius: 60px 60px;
+            -webkit-box-shadow: -1px 2px 2px rgba(0, 0, 0, 0.2);
+
+        }
+        #district:before{
+            content:'';
+            width: 25px;
+            height: 20px;
+            position: absolute;
+            bottom:0;
+            right:0;
+            -webkit-border-bottom-right-radius: 30px;
+            -webkit-box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.3);
+            -webkit-transform:
+                    rotate(-20deg)
+                    skew(-40deg,-3deg)
+                    translate(-13px,-13px);
+        }
+
+        #district:after{
+            content: '';
+            z-index: -1;
+            width: 100px;
+            height: 100px;
+            position:absolute;
+            bottom:0;
+            right:0;
+            background: rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            -webkit-box-shadow: 20px 20px 8px rgba(0, 0, 0, 0.2);
+            -webkit-transform: rotate(0deg)
+            translate(-45px,-20px)
+            skew(20deg);
+        }
+        p{
+            margin-left: 20px;
+        }
+    </style>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=1NhvrAS5SBkvafzVsQninzMGqGzmlQR7">
+    </script>
+</head>
+
+<body>
+    <h1>在高德地图中使用API查看行政区划和天气情况</h1>
+    <div id="container"></div>
+        <div id="weather">
+            <i class="border-right-animate"></i>
+            <p>{{ weatherData.city }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;空气湿度：{{ weatherData.humidity }}</p>
+            <p>天气：{{ weatherData.weather }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;风向：{{ weatherData.winddirection }}</p>
+            <p>温度：{{ weatherData.temperature }} 摄氏度&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;风力：{{ weatherData.windpower }}</p>
+            <p>数据发布时间：{{ weatherData.reporttime }}</p>
+        </div>
+        <hr>
+        <div id="district">
+            <p>区域中心点：{{ districtData.center }}</p>
+            <p>行政区划级别：{{ districtData.level }}</p>
+        </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="../weather.js"></script>
+    <script src="../district.js"></script>
+
+    <script type="text/javascript">
+        // 创建地图实例
+        var map = new BMap.Map("container");
+        // 创建点坐标
+        var point = new BMap.Point(121.65, 31.82);
+        // 初始化地图，设置中心点坐标和地图级别
+        map.centerAndZoom(point, 15);
+        //开启鼠标滚轮缩放，默认是关闭的
+        map.enableScrollWheelZoom(true);
+
+        // 创建标注
+        var marker = new BMap.Marker(point);
+        // 将标注添加到地图中
+        map.addOverlay(marker);
+
+        //为标注添加监听事件，点击标注显示天气信息
+        marker.addEventListener("click", function(){
+            if($("#weather").css("visibility") == "hidden"){
+                $("#weather").css("visibility", "visible");
+            }else{
+                $("#weather").css("visibility", "hidden");
+            }
+            if($("#district").css("visibility") == "hidden"){
+                $("#district").css("visibility", "visible");
+            }else{
+                $("#district").css("visibility", "hidden");
+            }
+        });
+
+    </script>
+</body>
+</html>
+
